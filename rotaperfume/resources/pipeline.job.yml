@@ -1,0 +1,24 @@
+# Starts with raw_conferencia. Future prompts add bronze, silver, gold,
+# quality checks, and serving tasks to this same job.
+resources:
+  jobs:
+    rotaperfume_pipeline:
+      name: rotaperfume_pipeline
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: America/Sao_Paulo
+        pause_status: PAUSED
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+      tasks:
+        - task_key: raw_conferencia
+          notebook_task:
+            notebook_path: ../src/raw/conferencia.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+          environment_key: serverless
+      environments:
+        - environment_key: serverless
+          spec:
+            client: "2"
